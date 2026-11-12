@@ -1,6 +1,7 @@
 package main
 
 import (
+	"errors"
 	"fmt"
 	"regexp"
 	"strings"
@@ -13,6 +14,12 @@ type Money int64
 
 // tipo eventType
 type EvenType uint8  // 0 a 255
+
+var (
+ErrInvalidEmail = errors.New("Email invalido")
+ErrNegativeMoney = errors.New("El monto debe ser mayor a 0")
+)
+
   
 // constante para iota
 //iota es un contador automatico que empieza en 0 dentro de cada bloque const
@@ -41,7 +48,8 @@ var emailRe = regexp.MustCompile(`^[^\s@]+@[^\s@]+\.[^\s@]+$`)
 func NewEmail(v string) (Email, error) {
 	v = strings.TrimSpace(strings.ToLower(v))
 	if !emailRe.MatchString(v) {
-		return "", fmt.Errorf("email inválido: %q", v)
+		// return "", fmt.Errorf("email inválido: %q", v)
+		return "", fmt.Errorf("%w: %q",ErrInvalidEmail,v)
 	}
 	return Email(v), nil
 }
@@ -49,7 +57,8 @@ func NewEmail(v string) (Email, error) {
 
 func NewMoneyFromCents(cents int64) (Money, error) {
 	if cents < 0 {
-		return 0, fmt.Errorf("money no puede ser negativo")
+		return 0, fmt.Errorf("%w: %d",ErrNegativeMoney,cents)
+		// return 0, errors.New("Monto no puede ser menor a 0") //mensaje fijo no dan mucho contexto solo respuesta concreta 
 	}
 	return Money(cents), nil
 }

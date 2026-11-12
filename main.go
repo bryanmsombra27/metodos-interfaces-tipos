@@ -2,14 +2,41 @@ package main
 
 import (
 	"context"
+	"errors"
 	"fmt"
 )
 
 func main() {
-	email, _ := NewEmail("koso@koso.com")
-	amount, _ := NewMoneyFromCents(45000)
+	email, err := NewEmail("koso@koso.com")
+
+	if err != nil {
+			if errors.Is(err,ErrInvalidEmail){
+				fmt.Println("email invalido corrige el formato")
+				return
+			}
+
+		fmt.Print("Error al crear el email",err)
+		return
+	}	
+	amount, err := NewMoneyFromCents(-45000)
+
+		if err != nil {
+		fmt.Print("Error al crear el monto",err)
+		return
+	}	
+	
 
 	fmt.Println(email,amount)
+
+		if err:= WriteReport("report.txt","Reporte de la semana"); err !=nil  {
+			fmt.Println("Al crear el reporte. Error: ",err)
+		}
+
+		if err:= ShadowingError(); err!=nil{
+			fmt.Println("Shadowing error: ",err)
+		}else{
+			fmt.Println("Shadowing error retorno nil",err)
+		}
 
 	ev:= NewPaymentDueEvent("evt_001",email,amount)
 
@@ -42,6 +69,11 @@ func main() {
 	senderNil := returnsTypeNil()
 	fmt.Println("Sender == nil",senderNil == nil)
 
+
+	// MustTemplate("payment_do")
+		if err:= RunSafely(func() {MustTemplate("Payment_do")}); err!= nil {
+			fmt.Println("Safe error: ",err)
+		}
 }
 
 
